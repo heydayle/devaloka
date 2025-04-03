@@ -6,7 +6,9 @@
 
 <script lang="ts">
 import { ref, onMounted, onBeforeUnmount, defineComponent } from 'vue';
-import * as THREE from 'three';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import * as THREE from 'three'
 
 export default defineComponent({
   setup() {
