@@ -4,133 +4,146 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+<script lang="ts">
+import { ref, onMounted, onBeforeUnmount, defineComponent } from 'vue';
 import * as THREE from 'three';
 
-const threeContainer = ref(null);
-let scene, camera, renderer, triangle;
-let animationFrameId;
+export default defineComponent({
+  setup() {
+    const threeContainer = ref<HTMLElement | null>(null);
+    let scene: THREE.Scene;
+    let camera: THREE.PerspectiveCamera;
+    let renderer: THREE.WebGLRenderer;
+    let triangle: THREE.Mesh;
+    let animationFrameId: number;
 
-const initThreeJs = () => {
-  // Tạo scene
-  scene = new THREE.Scene();
+    const initThreeJs = (): void => {
+      if (!threeContainer.value) return;
 
-  // Tạo camera
-  camera = new THREE.PerspectiveCamera(
-    60,
-    threeContainer.value.clientWidth / threeContainer.value.clientHeight,
-    0.1,
-    1000
-  );
-  camera.position.z = 5;
+      // Create scene
+      scene = new THREE.Scene();
 
-  // Tạo renderer
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setSize(threeContainer.value.clientWidth, threeContainer.value.clientHeight);
-  renderer.setClearColor(0x121212, 1);
-  threeContainer.value.appendChild(renderer.domElement);
+      // Create camera
+      camera = new THREE.PerspectiveCamera(
+        60,
+        threeContainer.value.clientWidth / threeContainer.value.clientHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 5;
 
-  // Thêm ánh sáng từ trên xuống
-  const ambientLight = new THREE.AmbientLight(0x040404, 0.2);
-  scene.add(ambientLight);
+      // Create renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(threeContainer.value.clientWidth, threeContainer.value.clientHeight);
+      renderer.setClearColor(0x121212, 1);
+      threeContainer.value.appendChild(renderer.domElement);
 
-  // Ánh sáng chính từ trên xuống
-  const topLight = new THREE.DirectionalLight(0xffffff, 1);
-  topLight.position.set(0, 5, 2);
-  topLight.castShadow = true;
-  scene.add(topLight);
+      // Add ambient light
+      const ambientLight = new THREE.AmbientLight(0x040404, 0.2);
+      scene.add(ambientLight);
 
-  // Ánh sáng phụ để tạo đủ độ sáng cho các cạnh
-  const fillLight = new THREE.DirectionalLight(0x9370DB, 0.3);
-  fillLight.position.set(0, -2, 1);
-  scene.add(fillLight);
+      // Main directional light from above
+      const topLight = new THREE.DirectionalLight(0xffffff, 1);
+      topLight.position.set(0, 5, 2);
+      topLight.castShadow = true;
+      scene.add(topLight);
 
-  // Tạo hình tam giác 3D
-  createTriangle();
+      // Fill light for better edge visibility
+      const fillLight = new THREE.DirectionalLight(0x9370DB, 0.3);
+      fillLight.position.set(0, -2, 1);
+      scene.add(fillLight);
 
-  // Bắt đầu animation loop
-  animate();
-};
+      // Create 3D triangle
+      createTriangle();
 
-const createTriangle = () => {
-  // Tạo hình tứ diện (tetrahedron) - hình tam giác 3D cơ bản
-  const geometry = new THREE.TetrahedronGeometry(1.5, 0);
+      // Start animation loop
+      animate();
+    };
 
-  // Sử dụng material phản chiếu
-  const material = new THREE.MeshStandardMaterial({
-    color: '#ffd324',          // Màu xanh
-    metalness: 0.3,           // Độ kim loại
-    roughness: 0.4,           // Độ nhám
-    flatShading: true,        // Phẳng để thấy rõ các mặt
-    emissive: 0x0,            // Không phát sáng
-    side: THREE.DoubleSide    // Hiển thị cả hai mặt
-  });
+    const createTriangle = (): void => {
+      // Create a tetrahedron (basic 3D triangle)
+      const geometry = new THREE.TetrahedronGeometry(1.5, 0);
 
-  // Tạo mesh từ geometry và material
-  triangle = new THREE.Mesh(geometry, material);
+      // Use a reflective material
+      const material = new THREE.MeshStandardMaterial({
+        color: '#ffd324',      // Yellow color
+        metalness: 0.3,        // Metallic level
+        roughness: 0.4,        // Roughness
+        flatShading: true,     // Flat shading to see faces clearly
+        emissive: 0x0,         // No emission
+        side: THREE.DoubleSide // Show both sides
+      });
 
-  // Xoay một chút để nhìn đẹp hơn khi bắt đầu
-  triangle.rotation.x = Math.PI / 6;
-  // triangle.rotation.y = Math.PI / 4;
+      // Create mesh from geometry and material
+      triangle = new THREE.Mesh(geometry, material);
 
-  // Thêm mesh vào scene
-  scene.add(triangle);
-};
+      // Rotate for better initial view
+      triangle.rotation.x = Math.PI / 6;
+      // triangle.rotation.y = Math.PI / 4;
 
-// Hàm animate cho hiệu ứng xoay liên tục nhẹ nhàng
-const animate = () => {
-  animationFrameId = requestAnimationFrame(animate);
+      // Add mesh to scene
+      scene.add(triangle);
+    };
 
-  if (triangle) {
-    // Xoay nhẹ nhàng liên tục
-    // triangle.rotation.y += 0.01;
-    triangle.rotation.x += 0.003;
+    // Animation function for continuous gentle rotation
+    const animate = (): void => {
+      animationFrameId = requestAnimationFrame(animate);
 
-    // Thêm chút chuyển động sin nhẹ để tạo cảm giác tự nhiên
-    // triangle.position.y = 0.1 * Math.sin(Date.now() * 0.001);
-  }
+      if (triangle) {
+        // Continuous gentle rotation
+        // triangle.rotation.y += 0.01;
+        triangle.rotation.x += 0.003;
 
-  renderer.render(scene, camera);
-};
+        // Add subtle sin movement for natural feel
+        // triangle.position.y = 0.1 * Math.sin(Date.now() * 0.001);
+      }
 
-// Hàm xử lý khi kích thước cửa sổ thay đổi
-const handleResize = () => {
-  if (threeContainer.value && camera && renderer) {
-    const width = threeContainer.value.clientWidth;
-    const height = threeContainer.value.clientHeight;
+      renderer.render(scene, camera);
+    };
 
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
-  }
-};
+    // Handle window resize
+    const handleResize = (): void => {
+      if (threeContainer.value && camera && renderer) {
+        const width = threeContainer.value.clientWidth;
+        const height = threeContainer.value.clientHeight;
 
-onMounted(() => {
-  initThreeJs();
-  window.addEventListener('resize', handleResize);
-});
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      }
+    };
 
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize);
+    onMounted(() => {
+      initThreeJs();
+      window.addEventListener('resize', handleResize);
+    });
 
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
-  }
+    onBeforeUnmount(() => {
+      window.removeEventListener('resize', handleResize);
 
-  // Dọn dẹp resources
-  if (triangle) {
-    triangle.geometry.dispose();
-    triangle.material.dispose();
-  }
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
 
-  if (renderer) {
-    renderer.dispose();
-  }
+      // Clean up resources
+      if (triangle) {
+        triangle.geometry.dispose();
+        triangle.material.dispose();
+      }
 
-  // Xóa canvas
-  if (threeContainer.value && renderer) {
-    threeContainer.value.removeChild(renderer.domElement);
+      if (renderer) {
+        renderer.dispose();
+      }
+
+      // Remove canvas
+      if (threeContainer.value && renderer) {
+        threeContainer.value.removeChild(renderer.domElement);
+      }
+    });
+
+    return {
+      threeContainer
+    };
   }
 });
 </script>
