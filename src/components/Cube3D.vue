@@ -1,17 +1,25 @@
 <template>
   <div class="container">
+    <div class="fps" style="color: white;z-index:10">{{ fps }}</div>
     <div ref="threeContainer" class="three-container"></div>
   </div>
 </template>
 
 <script lang="ts">
 import { ref, onMounted, onBeforeUnmount, defineComponent } from 'vue';
+import Stats from 'stats.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as THREE from 'three'
 
 export default defineComponent({
   setup() {
+
+    const fps = ref(0)  
+    const stats = new Stats()
+    stats.showPanel(0)
+    document.body.appendChild(stats.dom)
+
     const threeContainer = ref<HTMLElement | null>(null);
     let scene: THREE.Scene;
     let camera: THREE.PerspectiveCamera;
@@ -89,17 +97,18 @@ export default defineComponent({
 
     // Animation function for continuous gentle rotation
     const animate = (): void => {
+      stats.begin()
       animationFrameId = requestAnimationFrame(animate);
 
       if (triangle) {
         // Continuous gentle rotation
         // triangle.rotation.y += 0.01;
-        triangle.rotation.x += 0.003;
+        triangle.rotation.x += 0.002;
 
         // Add subtle sin movement for natural feel
         // triangle.position.y = 0.1 * Math.sin(Date.now() * 0.001);
       }
-
+      stats.end()
       renderer.render(scene, camera);
     };
 
@@ -144,7 +153,8 @@ export default defineComponent({
     });
 
     return {
-      threeContainer
+      threeContainer,
+      fps
     };
   }
 });

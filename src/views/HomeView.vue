@@ -7,26 +7,42 @@ import Cube3D from '@/components/Cube3D.vue';
   <main style="text-align: center;">
     <Cube3D style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1;" />
     <p style="font-size: 200px; margin-bottom: -50px;">Devaloka</p>
-    <p class="content">
-      Infinite realm of creation, where
-      language and the
-      cosmos resonate.
-    </p>
-    <div style="margin-top: 32px;">
-      <p class="content">
-        <a href="https://thinh.io.vn" target="_blank"
-          style="color: goldenrod; border-bottom: 1px solid goldenrod;padding-bottom: 0; padding: 0 12px 0px;">
-          @Thinh Le
+    <div style="margin-top: 32px;text-align: left;">
+      <p class="content" style="margin-top:16px">
+        >_ Hello world_
+      </p>
+      <p class="content list">
+        <a href="https://thinh.io.vn" target="_blank">
+          >_ mine
+        </a>
+        <a href="https://memories.thinh.io.vn" target="_blank">
+          >_ gallery
         </a>
       </p>
-      <p class="content">2025</p>
+        <p class="since">since 2025</p>
     </div>
   </main>
 </template>
 <style>
 .content {
   font-size: 24px;
-  font-family: 'Shavina Elegance';
+  font-family: monospace;
   margin-bottom: 0;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+a {
+  color: rgba(64, 64, 253, 0.89);
+}
+a:hover {
+  background: transparent;
+  color: goldenrod !important;
+}
+.since {
+  margin-top: 16px;
+  font-family: monospace;
 }
 </style>
