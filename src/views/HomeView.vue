@@ -6,7 +6,7 @@ import Cube3D from '@/components/Cube3D.vue';
 <template>
   <main style="text-align: center;">
     <Cube3D style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1;" />
-    <p style="font-size: 200px; margin-bottom: -50px;">Devaloka</p>
+    <p style="font-size: 200px; margin-bottom: -50px;">Heyday</p>
     <p style="font-size: 13px">Nobody's ever believed in me... I simply believed in myself</p>
     <div style="margin-top: 32px;text-align: left;">
       <p class="content" style="margin-top:16px">
